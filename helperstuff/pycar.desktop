@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=pycar
+Type=Application
+Exec=python /home/pi/Desktop/drive.py & 
+Terminal=false

@@ -1,0 +1,41 @@
+gpio -g mode 18 pwm
+gpio pwm-ms
+gpio pwmc 192
+gpio pwmr 2000
+gpio -g mode 18 pwm
+
+
+
+echo "27" > /sys/class/gpio/export
+echo "out" > /sys/class/gpio/gpio27/direction
+echo "1" > /sys/class/gpio/gpio27/value
+
+echo "22" > /sys/class/gpio/export
+echo "out" > /sys/class/gpio/gpio22/direction
+echo "1" > /sys/class/gpio/gpio22/value
+
+
+echo "18" > /sys/class/gpio/export
+echo "out" > /sys/class/gpio/gpio18/direction
+echo "1" > /sys/class/gpio/gpio18/value
+
+echo "23" > /sys/class/gpio/export
+echo "out" > /sys/class/gpio/gpio23/direction
+echo "1" > /sys/class/gpio/gpio23/value
+
+echo "24" > /sys/class/gpio/export
+echo "out" > /sys/class/gpio/gpio24/direction
+echo "1" > /sys/class/gpio/gpio24/value
+
+echo "12" > /sys/class/gpio/export
+echo "out" > /sys/class/gpio/gpio12/direction
+echo "1" > /sys/class/gpio/gpio12/value
+
+
+echo "19" > /sys/class/gpio/export
+echo "out" > /sys/class/gpio/gpio19/direction
+echo "1" > /sys/class/gpio/gpio19/value
+
+echo "13" > /sys/class/gpio/export
+echo "out" > /sys/class/gpio/gpio13/direction
+echo "1" > /sys/class/gpio/gpio13/value
