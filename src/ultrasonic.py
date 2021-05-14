@@ -4,8 +4,10 @@ import RPi.GPIO as GPIO
 import time
 import config
 import __main__
+import threading
 
 max_distance = 500
+lock = threading.Lock
 #GPIO Modus (BOARD / BCM)
 
 #Richtung der GPIO-Pins festlegen (IN / OUT)
@@ -22,6 +24,7 @@ GPIO.setup(GPIO_TRIGGER, GPIO.OUT)
 GPIO.setup(GPIO_ECHO, GPIO.IN)
 
 def distanz():
+    lock.acquire()
     GPIO.output(GPIO_TRIGGER, True)
  
     # setze Trigger nach 0.01ms aus LOW
@@ -38,6 +41,7 @@ def distanz():
     # speichere Ankunftszeit
     while GPIO.input(GPIO_ECHO) == 1:
         StopZeit = time.time()
+    lock.release()
  
     # Zeit Differenz zwischen Start und Ankunft
     TimeElapsed = StopZeit - StartZeit
