@@ -80,6 +80,19 @@ def set_control_led_to_throttle():
 	control_led.pwm(per_increment * (current_throttle_stage+1))
 def toggle_acceleration():
     motor.toggle_acceleration()
+
+def threaded_react_to_obstacle():
+    w_motor= char_to_motor["w"]
+    while not stop_application.isSet():
+        if(w_motor.is_running()):
+            distance = ultrasonic.distanz()
+            motor_power = w_motor._get_max_power()
+            if(distance < motor_power*30):
+                w_motor._set_max_power(motor_power/3)
+                set_control_led_to_throttle()
+
+
+        
 ###########################################
 ####			on startup			#######
 ###########################################
@@ -126,6 +139,8 @@ def main():
     char_to_motor["d"].counter = char_to_motor["a"]
 
     create_thread(ultrasonic.us_thread_fun)
+    create_thread(threaded_react_to_obstacle)
+    
     controller.start_controller()
     stop_application.wait()
     sys.exit()

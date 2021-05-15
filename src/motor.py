@@ -167,6 +167,8 @@ class Motor:
 		if self.is_running() and not self.turning_off.isSet():
 			#send the worker the new max power
 			self.on()
+	def _get_max_power(self):
+		return self.max_power
 
 	def is_running(self):
 		return not self.stopped.isSet()
