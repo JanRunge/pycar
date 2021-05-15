@@ -5,6 +5,7 @@ from threading import Thread
 from queue import Queue 
 from datetime import datetime, timedelta
 import sys
+import time
 import config
 
 
@@ -91,6 +92,9 @@ def threaded_react_to_obstacle():
                 print("obstacle avoided")
                 w_motor._set_max_power(motor_power/3)
                 set_control_led_to_throttle()
+            time.sleep(0.3)
+        else:
+            time.sleep(1)
 
 
         
