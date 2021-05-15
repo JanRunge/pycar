@@ -7,7 +7,7 @@ import __main__
 import threading
 
 max_distance = 500
-lock = threading.Lock
+lock = threading.Lock()
 #GPIO Modus (BOARD / BCM)
 
 #Richtung der GPIO-Pins festlegen (IN / OUT)
