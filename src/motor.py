@@ -2,6 +2,7 @@ from queue import Queue
 import threading
 from datetime import datetime, timedelta
 import __main__
+import sys
 
 acceleration = True
 
