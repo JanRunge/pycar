@@ -142,9 +142,10 @@ def main():
     char_to_motor["s"].counter = char_to_motor["w"]
     char_to_motor["a"].counter = char_to_motor["d"]
     char_to_motor["d"].counter = char_to_motor["a"]
-
-    create_thread(ultrasonic.us_thread_fun)
-    create_thread(threaded_react_to_obstacle)
+    if config.use_distance_led:
+        create_thread(ultrasonic.us_thread_fun)
+    if config.avoid_obstacles:
+        create_thread(threaded_react_to_obstacle)
     
     controller.start_controller()
     stop_application.wait()

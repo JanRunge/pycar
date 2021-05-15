@@ -13,5 +13,6 @@ increment_time_steering=0.1
 min_power_drive = 0.2
 min_power_steering =0.1
 break_increment_time_drive = 0
-
+use_distance_led = False
+avoid_obstacles = False
 testing = False
