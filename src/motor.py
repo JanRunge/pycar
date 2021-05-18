@@ -1,6 +1,7 @@
 from queue import Queue 
 import threading
 from datetime import datetime, timedelta
+from time import sleep
 import __main__
 import sys
 
@@ -162,4 +163,5 @@ def threaded_fun(motor):
             if current_throttle!=__main__.get_pin_value(pin_to_change):
                 __main__.set_pin_value(pin_to_change, current_throttle)
                 last_increment = datetime.now()
+            sleep(min(break_increment_time,increment_time,0.1 ))
             #sleep for a short time (min(increment time, 100ms))
