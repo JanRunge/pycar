@@ -8,20 +8,17 @@ import threading
 
 max_distance = 500
 lock = threading.Lock()
-#GPIO Modus (BOARD / BCM)
-
-#Richtung der GPIO-Pins festlegen (IN / OUT)
-led = PWMLED(config.pin_us_led)
-
-GPIO.setmode(GPIO.BCM)
- 
-#GPIO Pins zuweisen
 GPIO_TRIGGER = config.pin_us_trigger
 GPIO_ECHO = config.pin_us_echo
- 
-#Richtung der GPIO-Pins festlegen (IN / OUT)
-GPIO.setup(GPIO_TRIGGER, GPIO.OUT)
-GPIO.setup(GPIO_ECHO, GPIO.IN)
+led = None 
+def setup():
+    global led
+    led = PWMLED(config.pin_us_led)
+
+    GPIO.setmode(GPIO.BCM)
+    
+    GPIO.setup(GPIO_TRIGGER, GPIO.OUT)
+    GPIO.setup(GPIO_ECHO, GPIO.IN)
 #returns the distance in cm
 def distanz():
     lock.acquire()

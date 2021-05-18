@@ -170,6 +170,7 @@ def main():
                               break_increment_time = 0
                               )
     if config.use_distance_led:
+        ultrasonic.setup()
         create_thread(ultrasonic.us_thread_fun)
     if config.avoid_obstacles:
         create_thread(threaded_react_to_obstacle)
