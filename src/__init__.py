@@ -31,15 +31,15 @@ acceleration=True
 
 
 def get_pin_value(pin):
-        #if(testing == True):
-        #        return pin
-        #else:
-        return pin.value
+        if(testing == True):
+                return pin
+        else:
+            return pin.value
 def set_pin_value(pin, x):
-        #if(testing == True):
-        #        pin = x
-        #else:
-        pin.value = x
+        if(testing == True):
+                pin = x
+        else:
+            pin.value = x
 
 def create_thread(target, args =() ):
         thread = Thread(target = target, args =args)
