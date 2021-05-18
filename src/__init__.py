@@ -98,7 +98,7 @@ def threaded_react_to_obstacle():
             if(distance < motor_power*100):
                 w_motor._set_max_power(max(motor_power/3, 0.3))
                 set_control_led_to_throttle()
-                print("obstacle avoided")
+                print("obstacle avoided ("+str(distance)+"cm)")
                 control_led_secondary.on()
 
             time.sleep(0.1)
