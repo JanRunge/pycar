@@ -95,6 +95,7 @@ def threaded_react_to_obstacle():
     w_motor= drive_motor
     obstacle_avoided = False
     old_power= 1
+    led = PWMLED(config.pin_us_led)
     while not stop_application.isSet():
         if(w_motor.is_running()):
             distance = ultrasonic.distanz()
@@ -105,9 +106,11 @@ def threaded_react_to_obstacle():
                 set_control_led_to_throttle()
                 obstacle_avoided = True
                 print("obstacle avoided")
+                led.on()
             elif obstacle_avoided and distance>30:
                 w_motor._set_max_power(old_power)
                 obstacle_avoided = False
+                led.off()
 
             time.sleep(0.1)
         else:
