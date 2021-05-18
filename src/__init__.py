@@ -90,6 +90,7 @@ def toggle_acceleration():
 
 def threaded_react_to_obstacle():
     w_motor= drive_motor
+    control_led_secondary.off()
     while not stop_application.isSet():
         if(w_motor.is_running()):
             distance = ultrasonic.distanz()
