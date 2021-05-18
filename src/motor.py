@@ -120,9 +120,9 @@ def threaded_fun(motor):
                     target_throttle= message_content
                     divisor = 3
 
-        if direction == None: # wird übergeben, wenn gestoppt werden soll
+        if direction is None: # wird übergeben, wenn gestoppt werden soll
             direction = current_direction
-        current_direction_correct = current_direction == None or direction == current_direction
+        current_direction_correct = current_direction is None or direction == current_direction
         direction_bool  = direction_as_bool[direction]
         if not current_direction_correct:
             
