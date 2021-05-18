@@ -101,14 +101,14 @@ def threaded_react_to_obstacle():
             motor_power = w_motor._get_max_power()
             if(distance < motor_power*30):
                 old_power= motor_power
-                w_motor._set_max_power(motor_power/3)
+                w_motor._set_max_power(max(motor_power/3, 0.15))
                 set_control_led_to_throttle()
                 obstacle_avoided = True
                 print("obstacle avoided")
             elif obstacle_avoided and distance>30:
                 w_motor._set_max_power(old_power)
 
-            time.sleep(0.3)
+            time.sleep(0.1)
         else:
             time.sleep(1)
 
