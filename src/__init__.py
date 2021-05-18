@@ -75,11 +75,7 @@ def change_throttle_stage(by_amount):
         print("changed acceleration to " + str(throttle_stages[current_throttle_stage]))
 
 def set_control_led_to_throttle():
-        global current_throttle_stage
-        global throttle_stages
-
-        per_increment = 1.0 / len(throttle_stages)
-        control_led.pwm(per_increment * (current_throttle_stage+1))
+    control_led.pwm(drive_motor._get_max_power())
 def toggle_acceleration():
 	global acceleration
 	if acceleration:
@@ -94,23 +90,15 @@ def toggle_acceleration():
 
 def threaded_react_to_obstacle():
     w_motor= drive_motor
-    obstacle_avoided = False
-    old_power= 1
     while not stop_application.isSet():
         if(w_motor.is_running()):
             distance = ultrasonic.distanz()
             motor_power = w_motor._get_max_power()
             if(distance < motor_power*100):
-                old_power= motor_power
                 w_motor._set_max_power(max(motor_power/3, 0.3))
                 set_control_led_to_throttle()
-                obstacle_avoided = True
                 print("obstacle avoided")
                 control_led_secondary.on()
-        if obstacle_avoided and distance>100:
-            w_motor._set_max_power(old_power)
-            obstacle_avoided = False
-            control_led_secondary.off()
 
             time.sleep(0.1)
         else:
