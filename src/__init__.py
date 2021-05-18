@@ -107,6 +107,7 @@ def threaded_react_to_obstacle():
                 print("obstacle avoided")
             elif obstacle_avoided and distance>30:
                 w_motor._set_max_power(old_power)
+                obstacle_avoided = False
 
             time.sleep(0.1)
         else:
