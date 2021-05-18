@@ -37,6 +37,7 @@ def led_worker(q, led, stop_application):
 	blinking = False
 	blink_sleep = 0.0
 	last_blink_change = datetime.now()
+	sleeptime = 0.05
 	while True:
 		if stop_application.isSet():
 			sys.exit()
@@ -54,6 +55,7 @@ def led_worker(q, led, stop_application):
 				print("led worker discarded message:")
 				print(q_data)
 		if blinking:
+			sleeptime = blink_sleep
 			delta_since_last_blink_change = (datetime.now() - last_blink_change).total_seconds()
 			if delta_since_last_blink_change >= blink_sleep:
 				last_blink_change = datetime.now()
@@ -63,6 +65,7 @@ def led_worker(q, led, stop_application):
 				else:
 					__main__.set_pin_value(led, 0)
 		else:
+			sleeptime = 0.05
 			if __main__.get_pin_value(led)!=pwm_value:
 				__main__.set_pin_value(led,pwm_value)
-		sleep(0.05)
+		sleep(sleeptime)
