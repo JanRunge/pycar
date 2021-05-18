@@ -14,8 +14,7 @@ direction_as_bool = {
     "backward" : False 
 }
 def cond_log(motor, log):
-    if motor.char == "d" or motor.char == "a" :
-        __main__.log(motor.char, log)
+   __main__.log(motor.char, log)
 
 class Motor:
     # 
@@ -47,8 +46,7 @@ class Motor:
             increment = 1
             break_increment_time = 0
         
-        print(self.pin)
-        self.thread = __main__.create_thread(target = threaded_fun, args =(self))
+        self.thread = __main__.create_thread(target = threaded_fun, args =(self,))
 
     
     def drive_forward(self ):
@@ -64,7 +62,7 @@ class Motor:
             return self.last_message == message
 
         if not message_is_redundant():
-            __main__.log(self.char, "sending "+str(message)+ "to "+self.name +" worker")
+            __main__.log(self.name, "sending "+str(message)+ "to "+self.name +" worker")
             self.last_message = message
             self.queue.put(message)
             return True
@@ -135,6 +133,7 @@ def threaded_fun(motor):
             motor.running.set()
         else:
             motor.running.clear()
+        current_direction = direction
         if target_throttle!=current_throttle:
             passed_seconds = (datetime.now() - last_increment).total_seconds()
             if current_throttle < target_throttle:
