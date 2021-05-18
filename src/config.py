@@ -2,10 +2,10 @@ pin_forward= 22
 pin_backward= 27
 pin_left= 13
 pin_right= 19
-pin_control_led=4
+pin_control_led=17
 pin_us_trigger=18
 pin_us_echo=24
-pin_us_led = 17
+pin_us_led = 4
 
 max_power_steering = 0.35
 increment_time_drive=0.068
