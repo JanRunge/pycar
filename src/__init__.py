@@ -24,25 +24,27 @@ right = None
 vor= None
 back = None
 control_led = None
-char_to_motor = None
+
+drive_motor = None
+steer_motor = None
 
 
 
 def get_pin_value(pin):
-	#if(testing == True):
-	#	return pin
-	#else:
-	return pin.value
+        #if(testing == True):
+        #        return pin
+        #else:
+        return pin.value
 def set_pin_value(pin, x):
-	#if(testing == True):
-	#	pin = x
-	#else:
-	pin.value = x
+        #if(testing == True):
+        #        pin = x
+        #else:
+        pin.value = x
 
 def create_thread(target, args =() ):
-	thread = Thread(target = target, args =args)
-	thread.start()
-	return thread
+        thread = Thread(target = target, args =args)
+        thread.start()
+        return thread
 ##
 # Custom imports
 ##
@@ -53,37 +55,35 @@ import motor
 import ultrasonic
 
 def log(motor, message):
-	print("[ " + motor + " ] " + message);
+        print("[ " + motor + " ] " + message)
 
 def change_throttle_stage(by_amount):
-	global current_throttle_stage
-	global throttle_stages
+        global current_throttle_stage
+        global throttle_stages
 
-	current_throttle_stage +=by_amount
-	if len(throttle_stages) <= current_throttle_stage:
-		current_throttle_stage = 0
-	if current_throttle_stage<0:
-		current_throttle_stage = len(throttle_stages) -1
+        current_throttle_stage +=by_amount
+        if len(throttle_stages) <= current_throttle_stage:
+                current_throttle_stage = 0
+        if current_throttle_stage<0:
+                current_throttle_stage = len(throttle_stages) -1
 
+        drive_motor._set_max_power(throttle_stages[current_throttle_stage])
 
-	char_to_motor["w"]._set_max_power(throttle_stages[current_throttle_stage])
-	char_to_motor["s"]._set_max_power(throttle_stages[current_throttle_stage])
+        set_control_led_to_throttle()
 
-	set_control_led_to_throttle()
-
-	print("changed acceleration to " + str(throttle_stages[current_throttle_stage]))
+        print("changed acceleration to " + str(throttle_stages[current_throttle_stage]))
 
 def set_control_led_to_throttle():
-	global current_throttle_stage
-	global throttle_stages
+        global current_throttle_stage
+        global throttle_stages
 
-	per_increment = 1.0 / len(throttle_stages)
-	control_led.pwm(per_increment * (current_throttle_stage+1))
+        per_increment = 1.0 / len(throttle_stages)
+        control_led.pwm(per_increment * (current_throttle_stage+1))
 def toggle_acceleration():
     motor.toggle_acceleration()
 
 def threaded_react_to_obstacle():
-    w_motor= char_to_motor["w"]
+    w_motor= drive_motor
     while not stop_application.isSet():
         if(w_motor.is_running()):
             distance = ultrasonic.distanz()
@@ -99,7 +99,7 @@ def threaded_react_to_obstacle():
 
         
 ###########################################
-####			on startup			#######
+####       on startup               #######
 ###########################################
 def main():
     global left
@@ -107,7 +107,8 @@ def main():
     global vor
     global back
     global control_led
-    global char_to_motor
+    global drive_motor
+    global steer_motor
 
     if(run_on_remote):
         print("connecting with remote ... ")
@@ -132,16 +133,22 @@ def main():
             back = 4
             control_led = Custom_led(config.pin_control_led, testing, stop_application)
 
-    char_to_motor ={
-	"w": motor.Motor(_stop_flag, vor, None, throttle_stages[current_throttle_stage], config.increment_time_drive, char = "w", accelerate=True, min_power = config.min_power_drive, break_increment_time = config.break_increment_time_drive),
-    "s": motor.Motor(_stop_flag,back, None, throttle_stages[current_throttle_stage], config.increment_time_drive, char = "s", accelerate=True, min_power = config.min_power_drive, break_increment_time = config.break_increment_time_drive),
-	"a": motor.Motor(_stop_flag,left, None, max_power=config.max_power_steering, increment_time = config.increment_time_steering, char = "a", is_steering_motor = True, accelerate= True, min_power = config.min_power_steering, increment = 0.05, break_increment_time = 0),
-	"d": motor.Motor(_stop_flag,right, None, max_power=config.max_power_steering, increment_time = config.increment_time_steering, char = "d", is_steering_motor = True, accelerate= True, min_power = config.min_power_steering, increment = 0.05, break_increment_time = 0)
-    }
-    char_to_motor["w"].counter = char_to_motor["s"]
-    char_to_motor["s"].counter = char_to_motor["w"]
-    char_to_motor["a"].counter = char_to_motor["d"]
-    char_to_motor["d"].counter = char_to_motor["a"]
+    drive_motor = motor.Motor(forward_pin   = vor, 
+                              backward_pin  =back,
+                              max_power = throttle_stages[current_throttle_stage],
+                              increment_time = config.increment_time_drive,
+                              name = "drive",
+                              min_power = config.min_power_drive, 
+                              break_increment_time = config.break_increment_time_drive
+                              )
+    steer_motor = motor.Motor(forward_pin   = left, 
+                              backward_pin  = right,
+                              max_power = config.max_power_steering,
+                              increment_time = config.increment_time_steering,
+                              name = "steer",
+                              min_power = config.min_power_drive, 
+                              break_increment_time = 0
+                              )
     if config.use_distance_led:
         create_thread(ultrasonic.us_thread_fun)
     if config.avoid_obstacles:
@@ -150,5 +157,18 @@ def main():
     controller.start_controller()
     stop_application.wait()
     sys.exit()
+
+def drive_forward():
+    drive_motor.drive_forward()
+def drive_backward():
+    drive_motor.drive_backward()
+def steer_left():
+    steer_motor.drive_forward()
+def steer_right():
+    steer_motor.drive_backward()
+def drive_stop():
+    drive_motor.stop()
+def steer_stop():
+    steer_motor.stop()
 
 main()

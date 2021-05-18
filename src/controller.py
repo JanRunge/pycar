@@ -1,6 +1,7 @@
 from pyPS4Controller.controller import Controller
 import __main__
 from time import sleep
+import sys
 
 ##########################################
 #######   		Controller         #######
@@ -14,36 +15,35 @@ class MyController(Controller):
 	# Basic Controls#
 	#################
 	def on_up_arrow_press(self):
-		char_pressed('w')
+		__main__.drive_forward()
 	def on_down_arrow_press(self):
-		char_pressed('s')
+		__main__.drive_backward()
 	def on_left_arrow_press(self):
-		char_pressed('a')
+		__main__.steer_left()
 	def on_right_arrow_press(self):
-		char_pressed('d')
+		__main__.steer_right()
 	def on_up_down_arrow_release(self):
-		stop_ud()
+		__main__.drive_stop()
 	def on_left_right_arrow_release(self):
-		stop_lr()
+		__main__.steer_stop()
 
 	
 	def on_L3_left(self, val):
-		char_pressed('a')
+		__main__.steer_left()
 	def on_L3_right(self, val):
-		char_pressed('d')
+		__main__.steer_right()
 	def on_L3_x_at_rest(self):
-		#print("releasing L3")
-		stop_lr()
+		__main__.steer_stop()
 
 	def on_L2_release(self):
-		char_released('s')
+		__main__.drive_stop()
 	def on_L2_press(self, val):
-		char_pressed('s')
+		__main__.drive_backward()
 		
 	def on_R2_release(self):
-		char_released('w')
+		__main__.drive_stop()
 	def on_R2_press(self, val):
-		char_pressed('w')
+		__main__.drive_forward()
 
 	#################
 	# Special Controls#
@@ -51,11 +51,9 @@ class MyController(Controller):
 
 	#x: boost
 	def on_x_press(self):
-		__main__.char_to_motor["w"].boost(1)
-		__main__.char_to_motor["s"].boost(1)
+		__main__.drive_motor.boost(1)
 	def on_x_release(self):
-		__main__.char_to_motor["w"].unboost()
-		__main__.char_to_motor["s"].unboost()
+		__main__.drive_motor.unboost()
 
 	# R1 / L1: increase / decrease power
 	def on_R1_release(self):
@@ -92,9 +90,9 @@ def start_controller():
 
 def _start_controller():
 	if(__main__.testing):
-		char_pressed("w")
+		__main__.drive_forward()
 		sleep(2)
-		char_released("w")
+		__main__.drive_backward()
 		sleep(1)
 		__main__.change_throttle_stage(-1)
 	else:
@@ -114,15 +112,8 @@ def _start_controller():
 #######Controller Helper Functions#######
 ##########################################
 
-def char_pressed(char):
-	__main__.char_to_motor[char].on()
 
-def char_released(char):
-	__main__.char_to_motor[char].off()
-	
 def stop_ud():
-	char_released('w')
-	char_released('s')
+	__main__.drive_stop()
 def stop_lr():
-	char_released('a')
-	char_released('d')
+	__main__.steer_stop()
