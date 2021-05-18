@@ -10,15 +10,11 @@ max_distance = 500
 lock = threading.Lock()
 GPIO_TRIGGER = config.pin_us_trigger
 GPIO_ECHO = config.pin_us_echo
-led = None 
-def setup():
-    global led
-    led = PWMLED(config.pin_us_led)
 
-    GPIO.setmode(GPIO.BCM)
-    
-    GPIO.setup(GPIO_TRIGGER, GPIO.OUT)
-    GPIO.setup(GPIO_ECHO, GPIO.IN)
+GPIO.setmode(GPIO.BCM)
+
+GPIO.setup(GPIO_TRIGGER, GPIO.OUT)
+GPIO.setup(GPIO_ECHO, GPIO.IN)
 #returns the distance in cm
 def distanz():
     lock.acquire()
@@ -55,8 +51,9 @@ def us_thread_fun():
         time.sleep(0.5)
 
 def show_on_led(val):
+    #d
     val = min(val, 100) # i dont care for anything thats more than 100 cm away
     l = abs(val-100)/100
-    __main__.set_pin_value(led,l)
+    __main__.set_pin_value(__main__.control_led_secondary,l)
 
 

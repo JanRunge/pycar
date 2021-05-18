@@ -24,6 +24,7 @@ right = None
 vor= None
 back = None
 control_led = None
+control_led_secondary = None
 
 drive_motor = None
 steer_motor = None
@@ -129,6 +130,7 @@ def main():
     global control_led
     global drive_motor
     global steer_motor
+    global control_led_secondary
 
     if(run_on_remote):
         print("connecting with remote ... ")
@@ -144,6 +146,7 @@ def main():
             right = PWMLED(config.pin_right)
             vor = PWMLED(config.pin_forward) 
             back = PWMLED(config.pin_backward) 
+            control_led_secondary = Custom_led(config.pin_us_led, testing, stop_application)
             control_led = Custom_led(config.pin_control_led, testing, stop_application)
             control_led.on()
         else:
