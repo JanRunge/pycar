@@ -100,7 +100,7 @@ def threaded_react_to_obstacle():
         if(w_motor.is_running()):
             distance = ultrasonic.distanz()
             motor_power = w_motor._get_max_power()
-            if(distance < motor_power*30):
+            if(distance < motor_power*100):
                 old_power= motor_power
                 w_motor._set_max_power(max(motor_power/3, 0.15))
                 set_control_led_to_throttle()
