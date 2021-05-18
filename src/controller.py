@@ -27,7 +27,10 @@ class MyController(Controller):
 	def on_left_right_arrow_release(self):
 		__main__.steer_stop()
 
-	
+	def on_L3_up(self, val):
+		pass
+	def on_L3_down(self, val):
+		pass
 	def on_L3_left(self, val):
 		__main__.steer_left()
 	def on_L3_right(self, val):
