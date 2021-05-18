@@ -164,14 +164,3 @@ def threaded_fun(motor):
                 __main__.set_pin_value(pin_to_change, current_throttle)
                 last_increment = datetime.now()
             #sleep for a short time (min(increment time, 100ms))
-def toggle_acceleration():
-	global acceleration
-	if acceleration:
-		#disable
-		__main__.drive_motor.disable_acceleration()
-		__main__.control_led.blink(0.3)
-	else:
-		#enable
-		__main__.drive_motor.enable_acceleration()
-		__main__.control_led.disable_blink()
-	acceleration = not acceleration

@@ -27,7 +27,7 @@ control_led = None
 
 drive_motor = None
 steer_motor = None
-
+acceleration=True
 
 
 def get_pin_value(pin):
@@ -80,7 +80,16 @@ def set_control_led_to_throttle():
         per_increment = 1.0 / len(throttle_stages)
         control_led.pwm(per_increment * (current_throttle_stage+1))
 def toggle_acceleration():
-    motor.toggle_acceleration()
+	global acceleration
+	if acceleration:
+		#disable
+		drive_motor.disable_acceleration()
+		control_led.blink(0.3)
+	else:
+		#enable
+		drive_motor.enable_acceleration()
+		control_led.disable_blink()
+	acceleration = not acceleration
 
 def threaded_react_to_obstacle():
     w_motor= drive_motor
