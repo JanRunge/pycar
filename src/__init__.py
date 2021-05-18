@@ -81,7 +81,7 @@ def toggle_acceleration():
 	if acceleration:
 		#disable
 		drive_motor.disable_acceleration()
-		control_led.blink(0.3)
+		control_led.blink(0.2)
 	else:
 		#enable
 		drive_motor.enable_acceleration()

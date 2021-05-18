@@ -65,4 +65,4 @@ def led_worker(q, led, stop_application):
 		else:
 			if __main__.get_pin_value(led)!=pwm_value:
 				__main__.set_pin_value(led,pwm_value)
-		sleep(0.1)
+		sleep(0.05)
