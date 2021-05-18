@@ -103,65 +103,70 @@ def threaded_fun(motor):
     increment =motor.increment
     stopping_threshold = 0.1
     last_increment = datetime.now() - timedelta(seconds=2)
-
-    while True:
-        if __main__.stop_application.isSet():
-            cond_log(motor, "exit")
-            sys.exit()
-        while not q.empty():
-            message_type, message_content = q.get()
-            if message_type == message_type_throttle:
-                direction, target_throttle = message_content
-                divisor = 3
-            elif message_type == message_type_increment:
-                increment = message_content
-            elif message_type == message_type_power:
-                if target_throttle>0:
-                    target_throttle= message_content
+    try:
+        while True:
+            if __main__.stop_application.isSet():
+                cond_log(motor, "exit")
+                sys.exit()
+            while not q.empty():
+                message_type, message_content = q.get()
+                if message_type == message_type_throttle:
+                    direction, target_throttle = message_content
                     divisor = 3
+                elif message_type == message_type_increment:
+                    increment = message_content
+                elif message_type == message_type_power:
+                    if target_throttle>0:
+                        target_throttle= message_content
+                        divisor = 3
 
-        if direction is None: # wird übergeben, wenn gestoppt werden soll
-            direction = current_direction
-        current_direction_correct = current_direction is None or direction == current_direction
-        direction_bool  = direction_as_bool[direction]
-        if not current_direction_correct:
-            
-            pin_to_stop = bool_to_pin[not direction_bool]
-            __main__.set_pin_value(pin_to_stop, 0)
-            current_direction = None
-            current_throttle = 0
-        if target_throttle != 0:
-            motor.running.set()
-        else:
-            motor.running.clear()
-        current_direction = direction
-        if target_throttle!=current_throttle:
-            passed_seconds = (datetime.now() - last_increment).total_seconds()
-            if current_throttle < target_throttle:
-                if passed_seconds >=increment_time:
-                    if increment_time == 0:
-                        current_throttle = target_throttle
-                    else:
-                        #set the next biggest number which is still <=1
-                        current_throttle = min(1, current_throttle + increment , target_throttle)
-                        current_throttle = max(current_throttle, min_power)
-                #acceleration mode
-            elif current_throttle > target_throttle:
-                diff = current_throttle-target_throttle
-                if passed_seconds >=break_increment_time:
-                    if break_increment_time == 0:
-                        current_throttle = target_throttle
-                    else:
-                        #stop if the remaining difference is < 0.1
-                        if diff<=stopping_threshold:
+            if direction is None: # wird übergeben, wenn gestoppt werden soll
+                direction = current_direction
+            current_direction_correct = current_direction is None or direction == current_direction
+            direction_bool  = direction_as_bool[direction]
+            if not current_direction_correct:
+                
+                pin_to_stop = bool_to_pin[not direction_bool]
+                __main__.set_pin_value(pin_to_stop, 0)
+                current_direction = None
+                current_throttle = 0
+            if target_throttle != 0:
+                motor.running.set()
+            else:
+                motor.running.clear()
+            current_direction = direction
+            if target_throttle!=current_throttle:
+                passed_seconds = (datetime.now() - last_increment).total_seconds()
+                if current_throttle < target_throttle:
+                    if passed_seconds >=increment_time:
+                        if increment_time == 0:
                             current_throttle = target_throttle
                         else:
-                            current_throttle = max(current_throttle - (diff/divisor), 0, target_throttle)
-                            diff = current_throttle-target_throttle
-                            divisor= divisor-0.5
-            pin_to_change = bool_to_pin[direction_bool]
-            if current_throttle!=__main__.get_pin_value(pin_to_change):
-                __main__.set_pin_value(pin_to_change, current_throttle)
-                last_increment = datetime.now()
-            sleep(min(break_increment_time,increment_time,0.1 ))
-            #sleep for a short time (min(increment time, 100ms))
+                            #set the next biggest number which is still <=1
+                            current_throttle = min(1, current_throttle + increment , target_throttle)
+                            current_throttle = max(current_throttle, min_power)
+                    #acceleration mode
+                elif current_throttle > target_throttle:
+                    diff = current_throttle-target_throttle
+                    if passed_seconds >=break_increment_time:
+                        if break_increment_time == 0:
+                            current_throttle = target_throttle
+                        else:
+                            #stop if the remaining difference is < 0.1
+                            if diff<=stopping_threshold:
+                                current_throttle = target_throttle
+                            else:
+                                current_throttle = max(current_throttle - (diff/divisor), 0, target_throttle)
+                                diff = current_throttle-target_throttle
+                                divisor= divisor-0.5
+                pin_to_change = bool_to_pin[direction_bool]
+                if current_throttle!=__main__.get_pin_value(pin_to_change):
+                    __main__.set_pin_value(pin_to_change, current_throttle)
+                    last_increment = datetime.now()
+                sleep(min(break_increment_time,increment_time,0.1 ))
+                #sleep for a short time (min(increment time, 100ms))
+    except Exception as e:
+        __main__.log(motor.name, "worker crashed")
+        __main__.set_pin_value(motor.forward_pin, 0)
+        __main__.set_pin_value(motor.backward_pin, 0)
+        raise e
