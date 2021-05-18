@@ -57,7 +57,8 @@ class Motor:
         self._put_queue_value((message_type_throttle, ("backward", self.max_power)))
     def stop(self ):
         self._put_queue_value((message_type_throttle, (None, 0)))    
-
+    def is_running(self):
+        return self.running.is_set()
 
     def _put_queue_value(self, message):
         def message_is_redundant():
