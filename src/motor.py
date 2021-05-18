@@ -42,6 +42,7 @@ class Motor:
         self.last_message = 0    
         self.min_power = min_power
         self.name = name
+        self.lock = threading.Lock()
         if not accelerate :
             increment_time = 0
             increment = 1
@@ -71,10 +72,15 @@ class Motor:
         #print("not sending " +str(value))
             return False
     def _set_max_power(self, value):
+        self.lock.acquire()
         self.max_power = value
+        self.lock.release()
         self._put_queue_value((message_type_power, self.max_power))
     def _get_max_power(self):
-        return self.max_power
+        self.lock.acquire()
+        val =  self.max_power
+        self.lock.release()
+        return val
     def boost(self, throttle):
         self.default_max_power = self.max_power
         self._set_max_power(throttle)
